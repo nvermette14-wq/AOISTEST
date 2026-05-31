@@ -23,6 +23,29 @@
 
   <div class="container" id="pick-list">
 
+    {% if waiting_orders %}
+    <div class="waiting-section">
+      <div class="waiting-header">En attente de stock complet ({{ waiting_orders|length }} commande{{ 's' if waiting_orders|length > 1 }})</div>
+      {% for order in waiting_orders %}
+      <div class="waiting-card">
+        <div class="waiting-card-top">
+          <div>
+            <div class="order-num">#{{ order.doc_num }}</div>
+            <div class="order-client">{{ order.client }}</div>
+          </div>
+          <span class="badge-complete-only">Livraison complète</span>
+        </div>
+        <div class="waiting-missing">
+          Items manquants :
+          {% for item in order.missing_items %}
+          <span class="missing-item">{{ item.item_code }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
     {% for order in orders %}
     <div class="order-block" id="order-{{ order.doc_num }}">
 
@@ -135,6 +158,10 @@
   <!-- Boutons flottants -->
   <div class="fab-container">
     <button class="fab-scan" onclick="toggleScan()" title="Scanner un item">⬛</button>
+    <button class="btn btn-staging btn-fab" id="btn-stage"
+            onclick="stageItems()" style="display:none">
+      ZONE D'ATTENTE
+    </button>
     <button class="btn btn-warning btn-fab" id="btn-complete"
             onclick="completeTournee()">
       FERMER LA TOURNÉE
@@ -272,6 +299,7 @@
 
       doneCount = data.done;
       document.getElementById("done-count").textContent = doneCount;
+      updateStageBtn();
 
       if (doneCount >= totalItems) {
         document.getElementById("btn-complete").disabled = false;
@@ -342,9 +370,57 @@
       doneCount = data.done;
       document.getElementById("done-count").textContent = doneCount;
       updateCompleteBtn();
+      updateStageBtn();
     }
 
     // ── Complete (partiel ou complet) ─────────────────────────────────────────
+    // Show "Zone d'attente" button as soon as at least 1 item is confirmed
+    function updateStageBtn() {
+      const stageBtn = document.getElementById("btn-stage");
+      if (doneCount > 0 && doneCount < totalItems) {
+        stageBtn.style.display = "flex";
+      } else {
+        stageBtn.style.display = "none";
+      }
+    }
+
+    async function stageItems() {
+      const confirmed = doneCount;
+      const remaining = totalItems - doneCount;
+      const ok = confirm(
+        `Mettre ${confirmed} item${confirmed > 1 ? 's' : ''} en zone d'attente?\n\n` +
+        `Le stock prélevé sera mis de côté.\n` +
+        `Les ${remaining} item${remaining > 1 ? 's' : ''} restant${remaining > 1 ? 's' : ''} restent sur les commandes ouvertes dans SAP.\n` +
+        `Aucun bon de livraison ne sera créé.`
+      );
+      if (!ok) return;
+
+      document.getElementById("btn-stage").textContent = "...";
+      document.getElementById("btn-stage").disabled = true;
+
+      const resp = await fetch("/api/stage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: SESSION_ID, warehouse: WAREHOUSE })
+      });
+      const data = await resp.json();
+
+      let html = "";
+      for (const s of data.staged) {
+        html += `<div class="result-item result-ok">
+          <strong>${s.client}</strong> — Cmd #${s.doc_num}<br>
+          <small>${s.items} item${s.items > 1 ? 's' : ''} en zone d'attente</small>
+        </div>`;
+      }
+      html += `<div style="margin-top:12px;color:#888;font-size:0.85rem;">
+        Informer le superviseur de l'emplacement physique du stock stagé.
+      </div>`;
+      document.getElementById("result-list").innerHTML = html;
+      document.getElementById("modal-result").querySelector(".modal-title").textContent =
+        "Stock mis en zone d'attente";
+      document.getElementById("modal-result").style.display = "flex";
+    }
+
     function updateCompleteBtn() {
       const remaining = totalItems - doneCount;
       const btn = document.getElementById("btn-complete");

@@ -43,19 +43,20 @@ def init_db():
         );
 
         CREATE TABLE IF NOT EXISTS customers (
-            card_code    TEXT PRIMARY KEY,
-            card_name    TEXT,
-            phone        TEXT,
-            email        TEXT,
-            bill_street  TEXT,
-            bill_city    TEXT,
-            bill_province TEXT,
-            bill_zip     TEXT,
-            ship_street  TEXT,
-            ship_city    TEXT,
-            ship_province TEXT,
-            ship_zip     TEXT,
-            synced_at    TEXT DEFAULT CURRENT_TIMESTAMP
+            card_code         TEXT PRIMARY KEY,
+            card_name         TEXT,
+            phone             TEXT,
+            email             TEXT,
+            bill_street       TEXT,
+            bill_city         TEXT,
+            bill_province     TEXT,
+            bill_zip          TEXT,
+            ship_street       TEXT,
+            ship_city         TEXT,
+            ship_province     TEXT,
+            ship_zip          TEXT,
+            complete_delivery INTEGER DEFAULT 0,
+            synced_at         TEXT DEFAULT CURRENT_TIMESTAMP
         );
 
         CREATE VIRTUAL TABLE IF NOT EXISTS customers_fts USING fts5(

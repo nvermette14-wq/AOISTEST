@@ -66,6 +66,25 @@ def init_state_db():
             error       TEXT,
             created_at  TEXT DEFAULT CURRENT_TIMESTAMP
         );
+        CREATE TABLE IF NOT EXISTS staged_orders (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id  TEXT,
+            warehouse   TEXT,
+            doc_num     INTEGER,
+            card_code   TEXT,
+            client_name TEXT,
+            staged_at   TEXT DEFAULT CURRENT_TIMESTAMP,
+            released    INTEGER DEFAULT 0,
+            released_at TEXT
+        );
+        CREATE TABLE IF NOT EXISTS staged_items (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            staged_order_id INTEGER,
+            item_code   TEXT,
+            item_name   TEXT,
+            qty_staged  REAL,
+            FOREIGN KEY (staged_order_id) REFERENCES staged_orders(id)
+        );
         CREATE TABLE IF NOT EXISTS flags (
             id          INTEGER PRIMARY KEY AUTOINCREMENT,
             session_id  TEXT,
@@ -176,6 +195,55 @@ def get_orders_for_warehouse(warehouse_code: str) -> list:
     return orders
 
 
+def load_complete_delivery_flags() -> set:
+    """Returns set of card_codes requiring complete delivery before shipping."""
+    if not Path(SAP_DB_PATH).exists():
+        return set()
+    try:
+        conn = sqlite3.connect(SAP_DB_PATH)
+        rows = conn.execute(
+            "SELECT card_code FROM customers WHERE complete_delivery = 1"
+        ).fetchall()
+        conn.close()
+        return {r[0] for r in rows}
+    except Exception:
+        return set()
+
+
+def get_stock(item_codes: list) -> dict:
+    """Returns {item_code: available_qty} from local sap.db."""
+    if not Path(SAP_DB_PATH).exists() or not item_codes:
+        return {}
+    try:
+        conn = sqlite3.connect(SAP_DB_PATH)
+        placeholders = ",".join("?" for _ in item_codes)
+        rows = conn.execute(
+            f"SELECT item_code, available FROM items WHERE item_code IN ({placeholders})",
+            item_codes
+        ).fetchall()
+        conn.close()
+        return {r[0]: r[1] for r in rows}
+    except Exception:
+        return {}
+
+
+def toggle_complete_delivery(card_code: str) -> bool:
+    """Toggles complete_delivery flag. Returns new value."""
+    if not Path(SAP_DB_PATH).exists():
+        return False
+    conn = sqlite3.connect(SAP_DB_PATH)
+    current = conn.execute(
+        "SELECT complete_delivery FROM customers WHERE card_code=?", (card_code,)
+    ).fetchone()
+    new_val = 0 if (current and current[0]) else 1
+    conn.execute(
+        "UPDATE customers SET complete_delivery=? WHERE card_code=?", (new_val, card_code)
+    )
+    conn.commit()
+    conn.close()
+    return bool(new_val)
+
+
 def create_sap_delivery(card_code: str, warehouse: str, lines: list) -> int | None:
     """POST /DeliveryNotes to SAP B1. Returns doc number or None on error."""
     if USE_MOCK:
@@ -265,16 +333,35 @@ def pick(warehouse):
         except: s = 9999
         return (z, a, s)
 
-    # Items sorted by location within each order — orders kept intact
+    # Load complete-delivery flags and stock for filtering
+    complete_delivery_clients = load_complete_delivery_flags()
+    all_item_codes = list({l["item_code"] for o in orders for l in o["lines"]})
+    stock = get_stock(all_item_codes)
+
+    active_orders  = []
+    waiting_orders = []  # complete-delivery orders with missing stock
+
     for order in orders:
+        if order["card_code"] in complete_delivery_clients:
+            missing = [l for l in order["lines"]
+                       if stock.get(l["item_code"], 999) < l["qty"]]
+            if missing:
+                order["missing_items"] = missing
+                waiting_orders.append(order)
+                continue
+        active_orders.append(order)
+
+    # Sort lines by location within each order — keep orders intact
+    for order in active_orders:
         order["lines"].sort(key=lambda l: loc_key(l["bin_loc"]))
 
-    # Orders sequenced by their first item's location (reasonable overall path)
-    orders.sort(key=lambda o: loc_key(o["lines"][0]["bin_loc"] if o["lines"] else ""))
+    active_orders.sort(key=lambda o: loc_key(o["lines"][0]["bin_loc"] if o["lines"] else ""))
 
-    total_items = sum(len(o["lines"]) for o in orders)
+    total_items = sum(len(o["lines"]) for o in active_orders)
 
-    return render_template("pick.html", orders=orders, session_id=session_id,
+    return render_template("pick.html", orders=active_orders,
+                           waiting_orders=waiting_orders,
+                           session_id=session_id,
                            warehouse=warehouse, wh_name=wh_name,
                            total_items=total_items, mock=USE_MOCK)
 
@@ -347,8 +434,30 @@ def supervisor():
     flags  = [dict(r) for r in conn.execute(
         "SELECT * FROM flags WHERE resolved=0 ORDER BY created_at DESC"
     ).fetchall()]
+    staged = [dict(r) for r in conn.execute("""
+        SELECT so.*, GROUP_CONCAT(si.item_code || ' x' || CAST(si.qty_staged AS INTEGER), ', ') as items_summary
+        FROM staged_orders so
+        LEFT JOIN staged_items si ON si.staged_order_id = so.id
+        WHERE so.released = 0
+        GROUP BY so.id
+        ORDER BY so.staged_at DESC
+    """).fetchall()]
     conn.close()
-    return render_template("supervisor.html", flags=flags)
+
+    # Load customers with complete_delivery flag for management
+    customers = []
+    if Path(SAP_DB_PATH).exists():
+        try:
+            sap = sqlite3.connect(SAP_DB_PATH)
+            sap.row_factory = sqlite3.Row
+            customers = [dict(r) for r in sap.execute(
+                "SELECT card_code, card_name, complete_delivery FROM customers ORDER BY card_name LIMIT 100"
+            ).fetchall()]
+            sap.close()
+        except Exception:
+            pass
+
+    return render_template("supervisor.html", flags=flags, staged=staged, customers=customers)
 
 
 @app.route("/api/flag/resolve", methods=["POST"])
@@ -430,6 +539,60 @@ def pack(warehouse=None):
 
     return render_template("pack.html", notes=notes, warehouses=warehouses,
                            active_warehouse=warehouse, mock=USE_MOCK)
+
+
+@app.route("/api/stage", methods=["POST"])
+def stage_order():
+    """Move confirmed items to staging zone without creating SAP delivery."""
+    data       = request.json
+    session_id = data.get("session_id")
+    warehouse  = data.get("warehouse")
+
+    conn   = get_state_conn()
+    confs  = conn.execute(
+        "SELECT * FROM confirmations WHERE session_id=? AND confirmed=1 AND qty_picked>0",
+        (session_id,)
+    ).fetchall()
+
+    orders = get_orders_for_warehouse(warehouse)
+    order_map = {o["doc_num"]: o for o in orders}
+
+    from collections import defaultdict
+    by_order = defaultdict(list)
+    for c in confs:
+        by_order[c["doc_num"]].append(c)
+
+    staged = []
+    for doc_num, items in by_order.items():
+        order = order_map.get(doc_num, {})
+        client_name = order.get("client", str(doc_num))
+        card_code   = order.get("card_code", "")
+        s_id = conn.execute("""
+            INSERT INTO staged_orders (session_id, warehouse, doc_num, card_code, client_name)
+            VALUES (?,?,?,?,?)
+        """, (session_id, warehouse, doc_num, card_code, client_name)).lastrowid
+        for item in items:
+            order_lines = order.get("lines", [])
+            item_name = next((l["item_name"] for l in order_lines
+                              if l["item_code"] == item["item_code"]), item["item_code"])
+            conn.execute("""
+                INSERT INTO staged_items (staged_order_id, item_code, item_name, qty_staged)
+                VALUES (?,?,?,?)
+            """, (s_id, item["item_code"], item_name, item["qty_picked"]))
+        staged.append({"client": client_name, "doc_num": doc_num, "items": len(items)})
+
+    conn.execute("UPDATE sessions SET status='staged', completed_at=CURRENT_TIMESTAMP WHERE id=?",
+                 (session_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"ok": True, "staged": staged})
+
+
+@app.route("/api/supervisor/toggle-complete-delivery", methods=["POST"])
+def toggle_complete_delivery_route():
+    card_code = request.json.get("card_code")
+    new_val   = toggle_complete_delivery(card_code)
+    return jsonify({"ok": True, "complete_delivery": new_val})
 
 
 @app.route("/api/pack/done", methods=["POST"])

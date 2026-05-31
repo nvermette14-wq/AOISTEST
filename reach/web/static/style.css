@@ -361,6 +361,58 @@ body {
 }
 .flag-actions { display: flex; justify-content: flex-end; }
 
+/* ── Staging button ── */
+.btn-staging { background: #8e44ad; color: white; }
+.btn-staging:hover { background: #7d3c98; }
+
+/* ── Waiting orders section ── */
+.waiting-section {
+  margin-bottom: 20px;
+  border: 2px solid #e67e22;
+  border-radius: 12px; overflow: hidden;
+}
+.waiting-header {
+  background: #e67e22; color: white;
+  padding: 10px 16px; font-weight: 700; font-size: 0.9rem;
+}
+.waiting-card {
+  background: #fff9f0; padding: 12px 16px;
+  border-bottom: 1px solid #f0e0d0;
+}
+.waiting-card:last-child { border-bottom: none; }
+.waiting-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.badge-complete-only {
+  background: #e67e22; color: white;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+}
+.waiting-missing { font-size: 0.85rem; color: #888; }
+.missing-item {
+  display: inline-block; background: #ffeaa7;
+  color: #c0392b; padding: 2px 8px;
+  border-radius: 4px; margin: 2px; font-family: monospace;
+  font-size: 0.8rem;
+}
+
+/* ── Client toggle (supervisor) ── */
+.client-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: white; padding: 12px 16px;
+  border-radius: 10px; margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.client-code { font-family: monospace; font-size: 0.8rem; color: #888; }
+.client-name { font-size: 0.95rem; font-weight: 600; }
+.btn-toggle {
+  padding: 8px 16px; border-radius: 20px; border: none;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+}
+.toggle-off { background: #ecf0f1; color: #888; }
+.toggle-on  { background: #cc0000; color: white; }
+.toggle-on:hover  { background: #aa0000; }
+.toggle-off:hover { background: #dde; }
+
 /* ── Empty state ── */
 .empty-state {
   text-align: center; padding: 60px 20px; color: #999;

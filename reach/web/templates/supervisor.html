@@ -3,19 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Superviseur — Flags</title>
+  <title>Superviseur</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <div class="header">
     <a href="/" class="btn-back">←</a>
-    <h1>Alertes inventaire</h1>
-    {% if flags %}
-    <span class="progress-badge" style="background:#e74c3c;">{{ flags|length }}</span>
-    {% endif %}
+    <h1>Superviseur</h1>
+    {% if flags %}<span class="progress-badge">{{ flags|length }} alerte{{ 's' if flags|length > 1 }}</span>{% endif %}
   </div>
 
-  <div class="container">
+  <!-- Tabs -->
+  <div class="filter-bar">
+    <a href="#flags"   class="filter-btn active" onclick="showTab('flags',this)">🚩 Alertes ({{ flags|length }})</a>
+    <a href="#staged"  class="filter-btn" onclick="showTab('staged',this)">📦 Zone attente ({{ staged|length }})</a>
+    <a href="#clients" class="filter-btn" onclick="showTab('clients',this)">⚙️ Clients</a>
+  </div>
+
+  <!-- Tab: Flags -->
+  <div id="tab-flags" class="container">
     {% if flags %}
       {% for flag in flags %}
       <div class="flag-card" id="flag-{{ flag.id }}">
@@ -31,25 +37,83 @@
           <span class="flag-wh">{{ flag.warehouse }} — Cmd #{{ flag.doc_num }}</span>
           <span class="flag-time">{{ flag.created_at[:16] }}</span>
         </div>
-        {% if flag.note %}
-        <div class="flag-note">"{{ flag.note }}"</div>
-        {% endif %}
+        {% if flag.note %}<div class="flag-note">"{{ flag.note }}"</div>{% endif %}
         <div class="flag-actions">
-          <button class="btn btn-success" onclick="resolveFlag({{ flag.id }})">
-            ✓ Résolu
+          <button class="btn btn-success" onclick="resolveFlag({{ flag.id }})">✓ Résolu</button>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state"><div class="empty-icon">✓</div><div>Aucune alerte en cours</div></div>
+    {% endif %}
+  </div>
+
+  <!-- Tab: Zone d'attente -->
+  <div id="tab-staged" class="container" style="display:none">
+    {% if staged %}
+      {% for s in staged %}
+      <div class="pack-card" id="staged-{{ s.id }}" style="border-left-color:#e67e22;">
+        <div class="pack-card-header">
+          <div>
+            <div class="pack-client">{{ s.client_name }}</div>
+            <div class="pack-meta">Cmd #{{ s.doc_num }} — {{ s.warehouse }}</div>
+            <div class="pack-time">Stagé le {{ s.staged_at[:16] }}</div>
+            {% if s.items_summary %}
+            <div style="font-size:0.8rem;color:#888;margin-top:4px;">{{ s.items_summary }}</div>
+            {% endif %}
+          </div>
+          <div class="pack-status" style="background:#e67e22;">EN ATTENTE</div>
+        </div>
+        <div class="pack-actions">
+          <button class="btn btn-success" onclick="releaseStagedOrder({{ s.id }})">
+            Stock complet — Créer BL
           </button>
         </div>
       </div>
       {% endfor %}
     {% else %}
+      <div class="empty-state"><div class="empty-icon">📦</div><div>Aucun stock en zone d'attente</div></div>
+    {% endif %}
+  </div>
+
+  <!-- Tab: Clients — toggle livraison complète -->
+  <div id="tab-clients" class="container" style="display:none">
+    <div class="section-title" style="margin-bottom:16px;">
+      Activer "Livraison complète seulement" par client — la commande n'apparaît aux pickers que si tout le stock est disponible.
+    </div>
+    {% if customers %}
+      {% for c in customers %}
+      <div class="client-row" id="client-{{ c.card_code }}">
+        <div class="client-info">
+          <div class="client-code">{{ c.card_code }}</div>
+          <div class="client-name">{{ c.card_name }}</div>
+        </div>
+        <button class="btn-toggle {% if c.complete_delivery %}toggle-on{% else %}toggle-off{% endif %}"
+                id="toggle-{{ c.card_code }}"
+                onclick="toggleCompleteDelivery('{{ c.card_code }}')">
+          {% if c.complete_delivery %}COMPLET ✓{% else %}Normal{% endif %}
+        </button>
+      </div>
+      {% endfor %}
+    {% else %}
       <div class="empty-state">
-        <div class="empty-icon">✓</div>
-        <div>Aucune alerte en cours</div>
+        <div class="empty-icon">⚙️</div>
+        <div>Synchronisez d'abord les clients depuis SAP</div>
+        <div class="empty-sub">python reach/sap/sync.py</div>
       </div>
     {% endif %}
   </div>
 
   <script>
+    function showTab(name, btn) {
+      ['flags','staged','clients'].forEach(t => {
+        document.getElementById(`tab-${t}`).style.display = 'none';
+      });
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-${name}`).style.display = 'block';
+      btn.classList.add('active');
+    }
+
     async function resolveFlag(flagId) {
       await fetch("/api/flag/resolve", {
         method: "POST",
@@ -60,6 +124,28 @@
       card.classList.add("packed");
       setTimeout(() => card.remove(), 800);
     }
+
+    async function releaseStagedOrder(stageId) {
+      alert("Fonctionnalité à venir : création du BL depuis la zone d'attente.");
+    }
+
+    async function toggleCompleteDelivery(cardCode) {
+      const resp = await fetch("/api/supervisor/toggle-complete-delivery", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ card_code: cardCode })
+      });
+      const data = await resp.json();
+      const btn = document.getElementById(`toggle-${cardCode}`);
+      if (data.complete_delivery) {
+        btn.textContent = "COMPLET ✓";
+        btn.className = "btn-toggle toggle-on";
+      } else {
+        btn.textContent = "Normal";
+        btn.className = "btn-toggle toggle-off";
+      }
+    }
+
     setTimeout(() => location.reload(), 60000);
   </script>
 </body>
