@@ -23,57 +23,60 @@ You are building a **CRAFT-based AIOS** — an AI Operating System layered aroun
 
 ## About Me
 
-**Name:** [FILL IN — your name]
+**Name:** Tig
 
-**Role:** [FILL IN — your title or description, e.g., "Founder of Acme Inc."]
+**Role:** Vendeur interne chez Entreprise (distribution d'outillage, quincaillerie industrielle et EPI, ~100 employés)
 
-**Background:** [FILL IN — 2–3 sentences on your background, what you've built, what you're working toward]
+**Background:** Tig travaille dans un environnement de distribution industrielle établi. Son quotidien : demandes de prix, soumissions, et entrée de commandes dans SAP B1. Il a initié ce projet AIOS pour moderniser les façons de travailler — d'abord les siennes, ensuite les opérations de toute l'entreprise.
 
 **What I care about most:**
-- [FILL IN]
-- [FILL IN]
-- [FILL IN]
+- Efficacité — éliminer les tâches manuelles répétitives
+- Impact concret — des améliorations visibles au quotidien
+- Modernisation progressive — améliorer sans tout casser
 
 ---
 
 ## The Business
 
-**Company:** [FILL IN — company name]
+**Company:** Entreprise
 
-**What we do:** [FILL IN — one sentence: what you sell, who you sell it to]
+**What we do:** Distribution d'outillage, quincaillerie industrielle, EPI et fournitures industrielles à des entreprises et professionnels.
 
-**Business model:** [FILL IN — how you make money: subscription / project / retainer / product]
+**Business model:** Ventes de produits B2B — commandes par téléphone/courriel, gérées dans SAP Business One. Marketing via flyers de spéciaux et infolettres.
 
-**Customers:** [FILL IN — who your customers are, their pain, what they're hiring you for]
+**Customers:** Entreprises industrielles, entrepreneurs, professionnels du manufacturier, construction et maintenance. Ils veulent un approvisionnement rapide et fiable avec un service qui connaît les produits.
 
-**Pricing:** [FILL IN — rough price points or tiers]
+**Pricing:** Sur devis selon produits, volumes et clients — soumissions dans SAP B1.
 
-**Current stage:** [FILL IN — early / growth / established; revenue range is helpful]
+**Current stage:** Entreprise établie, ~100 employés.
 
 ---
 
 ## Team
 
-[FILL IN — list team members, roles, and what they own. "Just me" is fine if solo.]
+~100 employés. Structure principale : ventes internes, entrepôt, livraison, admin/back-office.
 
-| Name | Role | Owns |
-|------|------|------|
-| [Name] | [Role] | [What they're responsible for] |
+| Nom | Rôle | Responsabilités |
+|-----|------|----------------|
+| Tig | Vendeur interne | Demandes de prix, soumissions, commandes SAP B1, service client |
+| Équipe entrepôt | Opérations | Prélèvement, emballage, expédition |
+| Équipe livraison | Livraison | Transport et remise aux clients |
+| Admin | Back-office | Facturation, rapports, coordination (à documenter) |
 
 ---
 
 ## Strategy This Quarter
 
 **Top priorities (in order):**
-1. [FILL IN]
-2. [FILL IN]
-3. [FILL IN]
+1. Moderniser les processus de ventes internes — automatiser les tâches répétitives (demandes de prix, suivi, communication client)
+2. Cartographier les opérations — documenter le flux complet commande → entrepôt → livraison pour identifier les gains faciles
+3. Explorer le back-office — comprendre facturation, rapports et coordination pour cibler les prochaines améliorations
 
 **Key target or metric to move:**
-[FILL IN — e.g., "$15K MRR by end of Q3" or "20K YouTube subscribers by December"]
+3 processus manuels automatisés ou significativement accélérés d'ici fin Q2 2026.
 
 **What we're deliberately NOT doing right now:**
-[FILL IN — what you're saying no to, to stay focused]
+Pas de refonte complète. Des gains concrets et progressifs seulement.
 
 ---
 
@@ -81,13 +84,13 @@ You are building a **CRAFT-based AIOS** — an AI Operating System layered aroun
 
 The AI should write and speak in my voice. When drafting emails, posts, or any outward-facing content, match this style:
 
-**Tone:** [FILL IN — e.g., "Direct, warm, no corporate speak. Like talking to a smart friend."]
+**Tone:** Chaleureux et bref. Professionnel mais humain. Pas de corporate speak. Comme parler à un collègue compétent.
 
-**Writing style:** [FILL IN — e.g., "Short sentences. No filler. Get to the point fast."]
+**Writing style:** Court par défaut. Phrases directes. Pas de fioriture. Français québécois naturel.
 
-**Things I never say:** [FILL IN — phrases or words you dislike, e.g., "leverage", "synergy", "per my last email"]
+**Things I never say:** Formules de politesse excessives, jargon corporatif creux, "j'espère que ce courriel vous trouve bien", "n'hésitez pas à me contacter".
 
-**Voice samples:** See `context/voice/samples.md` for 5+ examples of my actual writing.
+**Voice samples:** See `context/voice/samples.md` for examples of my actual writing.
 
 ---
 
@@ -96,33 +99,33 @@ The AI should write and speak in my voice. When drafting emails, posts, or any o
 Use this to classify incoming email. Classify every email into one of three buckets.
 
 **Ignore — never read these:**
-- [FILL IN — e.g., "All newsletters and marketing digests"]
-- [FILL IN — e.g., "Platform notifications from GitHub, Notion, etc."]
-- [FILL IN — e.g., "Automated receipts and billing confirmations"]
+- Réponses de politesse sans contenu ("merci", "parfait", "ok", etc.)
+- Notifications automatiques de plateformes
+- Confirmations d'envoi ou de réception automatiques
 
 **Draft — AI writes a reply for me to review:**
-- [FILL IN — e.g., "Emails from existing clients or partners"]
-- [FILL IN — e.g., "New inquiries from warm leads"]
-- [FILL IN — e.g., "Anything requiring a thoughtful, personalized response"]
+- Demandes de prix ou soumissions de clients existants
+- Nouvelles demandes de clients potentiels
+- Toute situation qui nécessite un jugement ou une réponse personnalisée
 
 **Auto-respond — send immediately without review:**
-- [FILL IN — e.g., "Cold outreach pitches — decline politely using the template"]
-- [FILL IN — e.g., "Basic 'where do I find X' questions that have a standard answer"]
+- Questions simples avec une réponse standard connue
 
-**Auto-respond template (cold outreach decline):**
-> [FILL IN — your actual decline message. Keep it short and human.]
+**Auto-respond template (acknowledgement rapide):**
+> Bonjour, bien reçu. Je reviens vers vous rapidement.
+> Tig
 
 ---
 
 ## Working Preferences
 
-**Format preference:** [FILL IN — e.g., "Bullet points by default. Prose only for long-form content."]
+**Format preference:** Bullet points par défaut. Prose seulement pour les contenus longs.
 
-**Response length:** [FILL IN — e.g., "Short by default. If I need more detail I'll ask."]
+**Response length:** Court par défaut. Si j'ai besoin de plus de détails, je vais demander.
 
-**When to ask vs. act:** [FILL IN — e.g., "For anything that touches external systems or sends messages, ask first. For file edits and analysis, just do it."]
+**When to ask vs. act:** Pour tout ce qui touche des systèmes externes ou envoie des messages, demander d'abord. Pour les fichiers, l'analyse, et les tâches internes, agir directement.
 
-**Things I find annoying:** [FILL IN — e.g., "Long preambles before getting to the answer. Over-explaining things I already know."]
+**Things I find annoying:** Longues introductions avant la réponse. Sur-expliquer des choses évidentes. Formalités inutiles.
 
 ---
 

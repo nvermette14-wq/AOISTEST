@@ -1,5 +1,5 @@
 # Voice Samples
-<!-- v1.0.0 -->
+<!-- v1.1.0 -->
 
 > 5+ examples of your actual writing. The AI reads these to match your voice when drafting emails, posts, or any content.
 > Use real writing — copy from emails you've sent, posts you've published, or messages you've written.
@@ -7,63 +7,67 @@
 
 ---
 
-## Sample 1 — [Context, e.g., "Email to a prospective client"]
-
-**Tone notes:** [e.g., "Warm but direct. Gets to the point fast. No filler."]
-
-```
-[FILL IN — paste actual writing here. 150–400 words is ideal.]
-```
-
----
-
-## Sample 2 — [Context, e.g., "YouTube comment reply"]
-
-**Tone notes:** [e.g., "Casual. Short. Conversational."]
-
-```
-[FILL IN]
-```
-
----
-
-## Sample 3 — [Context, e.g., "LinkedIn post"]
-
-**Tone notes:** [e.g., "More formal than email but still first-person and direct."]
-
-```
-[FILL IN]
-```
-
----
-
-## Sample 4 — [Context, e.g., "Slack message to team"]
-
-**Tone notes:** [e.g., "Very casual. Bullet points. Usually short."]
-
-```
-[FILL IN]
-```
-
----
-
-## Sample 5 — [Context, e.g., "Proposal to a new client"]
-
-**Tone notes:** [e.g., "Professional but not stiff. Clear value statement up front."]
-
-```
-[FILL IN]
-```
-
----
-
 ## Voice Summary
 
-Based on the samples above, here's how to sound like me:
+Style général de Tig : chaleureux et bref. Professionnel mais humain. Va droit au but sans être froid. Écrit comme il parle — naturel, pas corporate.
 
-- **Openers:** [FILL IN — e.g., "Start with the key point. Never 'I hope this finds you well.'"]
-- **Length:** [FILL IN — e.g., "Short by default. Expand only when complexity requires it."]
-- **Vocabulary:** [FILL IN — e.g., "Plain English. No jargon unless the reader definitely knows it."]
-- **Punctuation:** [FILL IN — e.g., "Lots of em-dashes. Short paragraphs. Lists over long prose."]
-- **Sign-off:** [FILL IN — e.g., "Just my first name. No 'Best regards' or 'Warm wishes.'"]
-- **Never use:** [FILL IN — e.g., "leverage, synergy, ecosystem, circle back, per my last email"]
+- **Openers:** Direct. Pas de "j'espère que ce courriel vous trouve bien."
+- **Length:** Court par défaut. Expand seulement si la complexité l'exige.
+- **Vocabulary:** Français québécois naturel. Termes industriels quand approprié.
+- **Tone:** Chaleureux mais efficace. Pas de fioriture.
+- **Sign-off:** Simple — prénom ou rien.
+- **Never use:** Jargon corporatif creux, formules de politesse excessives.
+
+---
+
+## Sample 1 — [À remplir : courriel de soumission à un client]
+
+**Tone notes:** Chaleureux, direct, professionnel.
+
+```
+[Colle ici un vrai courriel de soumission que tu as envoyé — 150 à 400 mots idéalement.]
+```
+
+---
+
+## Sample 2 — [À remplir : réponse à une demande de prix]
+
+**Tone notes:** Rapide, précis, serviable.
+
+```
+[Colle ici une vraie réponse à une demande de prix.]
+```
+
+---
+
+## Sample 3 — [À remplir : suivi de commande ou livraison]
+
+**Tone notes:** Proactif, rassurant, bref.
+
+```
+[Colle ici un vrai message de suivi.]
+```
+
+---
+
+## Sample 4 — [À remplir : message interne à l'équipe]
+
+**Tone notes:** Très décontracté, pratique, pas de filtre corporate.
+
+```
+[Colle ici un vrai message interne — Slack, Teams, courriel interne, peu importe.]
+```
+
+---
+
+## Sample 5 — [À remplir : communication avec un fournisseur ou partenaire]
+
+**Tone notes:** Professionnel, direct, orienté vers l'action.
+
+```
+[Colle ici un vrai message à un fournisseur ou partenaire.]
+```
+
+---
+
+> **Note :** Les samples ci-dessus sont à remplir avec tes vrais écrits. Plus ils sont authentiques et variés, mieux Claude pourra imiter ton style. Prends 10 minutes pour coller de vrais exemples — ça vaut le coup.

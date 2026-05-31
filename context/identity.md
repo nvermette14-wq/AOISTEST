@@ -1,5 +1,5 @@
 # Identity
-<!-- v1.0.0 -->
+<!-- v1.1.0 -->
 
 > Who you are. The AI reads this to understand your background, what drives you, and how to work with you effectively.
 
@@ -7,43 +7,44 @@
 
 ## Name
 
-[FILL IN — your full name]
+Tig
 
 ## Role
 
-[FILL IN — your title or how you'd describe yourself. Examples: "Founder of Acme Inc.", "Consultant and content creator", "Operations lead at StartupName"]
+Vendeur interne chez Entreprise — distribution d'outillage, quincaillerie industrielle et EPI.
 
 ## Background
 
-[FILL IN — 3–5 sentences on your professional background. What did you do before this? What have you built? What are you known for?]
+Tig travaille dans un environnement de distribution industrielle établi de 100 personnes. Son rôle au quotidien : gérer les demandes de prix et commandes de clients par téléphone et courriel, et les entrer dans SAP B1. Il est à l'origine de ce projet AIOS pour moderniser les façons de travailler — d'abord dans ses propres processus, ensuite dans les opérations de l'entreprise.
 
 ## What I'm Building Toward
 
-[FILL IN — your 2–5 year vision. Not a mission statement — just what you're actually trying to create.]
+Moderniser comment Entreprise opère — réduire les tâches manuelles répétitives, améliorer l'efficacité des ventes internes, et éventuellement transformer les opérations de l'entrepôt. Le but : que les 100 personnes travaillent plus intelligemment, pas plus fort.
 
 ## What I Care About Most
 
-- [FILL IN — a value, outcome, or way of working you prioritize]
-- [FILL IN]
-- [FILL IN]
+- Efficacité : éliminer les étapes inutiles et les processus manuels qui peuvent être automatisés
+- Impact concret : des améliorations qui se voient au quotidien, pas juste sur papier
+- Modernisation progressive : améliorer sans tout casser
 
 ## Strengths
 
-- [FILL IN — what you're genuinely good at]
-- [FILL IN]
+- Proximité avec le plancher — comprend les opérations réelles, pas juste théoriques
+- Initiative : a pris les devants pour bâtir ce système sans qu'on lui demande
+- Connaissance du flux de travail : ventes internes, SAP B1, processus entrepôt
 
 ## Blind Spots / Weaknesses
 
-[FILL IN — things you know you're not great at, or areas where you need to be told when you're off track. Honest > polished.]
+Moins familier avec le côté admin et back-office (facturation, rapports, coordination d'équipe). C'est précisément là que le système peut aider le plus.
 
 ## Working Style
 
-[FILL IN — how do you prefer to work? Examples: "High output in the morning, administrative in the afternoon." "I think best in writing, not verbally." "I like to move fast and fix things later."]
+Pratique et direct. Préfère les solutions concrètes. Pas de temps à perdre avec des théories qui ne s'appliquent pas au terrain.
 
 ## What Energizes Me
 
-[FILL IN — the type of work that gives you energy, not drains it]
+Trouver un processus inefficace et le rendre 10x plus rapide. Automatiser quelque chose que les gens faisaient manuellement depuis des années.
 
 ## What Drains Me
 
-[FILL IN — the type of work you avoid or find exhausting]
+Les tâches répétitives sans valeur ajoutée. Les réunions sans décisions. L'admin pour l'admin.

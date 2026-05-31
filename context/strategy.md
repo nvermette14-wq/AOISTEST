@@ -1,5 +1,5 @@
 # Strategy
-<!-- v1.0.0 -->
+<!-- v1.1.0 -->
 
 > Current quarter priorities and goals. Update this at the start of each quarter. The AI reads this to give advice that's aligned with where you're actually going right now.
 
@@ -7,44 +7,46 @@
 
 ## This Quarter
 
-**Quarter:** [FILL IN — e.g., Q3 2026 (July–September)]
+**Quarter:** Q2 2026 (avril–juin)
 
-**Theme:** [FILL IN — one word or short phrase that captures the focus. Examples: "Foundation", "Launch", "Scale", "Consolidate"]
+**Theme:** Modernisation
 
 ## Top 3 Priorities (in order)
 
-1. **[FILL IN]** — [1–2 sentence description of what "done" looks like]
-2. **[FILL IN]** — [description]
-3. **[FILL IN]** — [description]
+1. **Moderniser les processus de ventes internes** — Identifier et automatiser les tâches répétitives du quotidien : demandes de prix, suivi de commandes, communication client.
+
+2. **Comprendre et cartographier les opérations** — Documenter le flux complet (commande → entrepôt → livraison) pour identifier les points de friction et les gains faciles.
+
+3. **Explorer le back-office** — Comprendre la facturation, les rapports, et la coordination d'équipe pour cibler les prochaines améliorations.
 
 ## Key Target
 
-[FILL IN — the single most important metric to move this quarter. Examples: "$15K MRR by September 30", "1,000 community members by end of quarter", "3 enterprise clients signed"]
+Avoir au moins 3 processus manuels automatisés ou significativement accélérés d'ici fin Q2 2026.
 
 ## What We're Deliberately Ignoring
 
-[FILL IN — what you're saying no to this quarter in order to focus. This is as important as what you're doing.]
+Les projets sans impact direct sur les opérations quotidiennes. Pas de refonte complète — des gains concrets et progressifs.
 
 ## Key Bets
 
-[FILL IN — the 1–2 highest-risk, highest-reward things you're trying this quarter]
+- Un AIOS bien configuré peut transformer la productivité d'un vendeur interne sans investissement majeur en infrastructure
+- Moderniser par la base (Tig d'abord) crée un modèle reproductible pour le reste de l'équipe
 
 ## 90-Day Milestones
 
 | Date | Milestone |
 |------|-----------|
-| [Month Day] | [FILL IN] |
-| [Month Day] | [FILL IN] |
-| [Month Day] | [FILL IN] |
-| End of quarter | [The key target above] |
+| Juin 2026 | Context Node installé et CLAUDE.md complet |
+| Juin 2026 | Intelligence Node installé (données live dans le système) |
+| Fin Q2 2026 | 3 processus améliorés documentés et actifs |
 
 ## Last Quarter — What Worked / What Didn't
 
 **Worked:**
-- [FILL IN]
+- Décision de bâtir un AIOS plutôt que d'attendre une solution top-down
 
 **Didn't work:**
-- [FILL IN]
+- Back-office encore une boîte noire — pas encore cartographié
 
 **Carrying forward:**
-- [FILL IN — anything from last quarter that needs to continue]
+- Continuer à documenter les processus au fur et à mesure qu'on les touche
