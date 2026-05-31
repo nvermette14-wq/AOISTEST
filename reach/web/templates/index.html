@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WMS — Choisir votre poste</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="header">
+    <h1>Choisir votre succursale</h1>
+    <a href="/supervisor" class="btn-supervisor">🚩 Superviseur</a>
+    {% if mock %}<span class="badge badge-mock">MODE TEST</span>{% endif %}
+  </div>
+
+  <div class="container">
+    <div class="section-title">Ce choix sera mémorisé sur cet appareil</div>
+
+    <form method="POST" action="/set-warehouse">
+      <div class="card-grid">
+        {% for wh in warehouses %}
+        <button type="submit" name="warehouse" value="{{ wh.WarehouseCode }}" class="card-wh card-wh-btn">
+          <div class="wh-code">{{ wh.WarehouseCode }}</div>
+          <div class="wh-name">{{ wh.WarehouseName }}</div>
+          <div class="wh-arrow">→</div>
+        </button>
+        {% endfor %}
+      </div>
+    </form>
+  </div>
+</body>
+</html>

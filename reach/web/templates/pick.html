@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prélèvement — {{ warehouse }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="header">
+    <a href="/change-warehouse" class="btn-back" title="Changer de succursale">←</a>
+    <h1>{{ wh_name }}</h1>
+    <span class="progress-badge"><span id="done-count">0</span>/{{ total_items }}</span>
+    {% if mock %}<span class="badge badge-mock">TEST</span>{% endif %}
+  </div>
+
+  <!-- Scan bar (activé par bouton flottant ou scanner dédié) -->
+  <div class="scan-bar" id="scan-bar">
+    <input type="text" id="scan-input" placeholder="Scanner le code item..."
+           autocomplete="off" autocorrect="off" autocapitalize="off">
+    <button onclick="closeScan()" class="btn-icon">✕</button>
+  </div>
+
+  <div class="container" id="pick-list">
+
+    {% for order in orders %}
+    <div class="order-block" id="order-{{ order.doc_num }}">
+
+      <div class="order-header">
+        <div class="order-header-left">
+          <div class="order-num">#{{ order.doc_num }}</div>
+          <div class="order-client">{{ order.client }}</div>
+          <div class="order-date">{{ order.doc_date }}</div>
+        </div>
+        <div class="order-status" id="order-status-{{ order.doc_num }}">
+          <span class="order-badge">{{ order.lines|length }} item{{ 's' if order.lines|length > 1 }}</span>
+        </div>
+      </div>
+
+      {% for line in order.lines %}
+      <div class="pick-card" id="card-{{ order.doc_num }}-{{ line.item_code }}"
+           data-doc="{{ order.doc_num }}"
+           data-item="{{ line.item_code }}"
+           data-qty="{{ line.qty | int }}"
+           data-doc-entry="{{ order.doc_entry }}">
+
+        <div class="pick-card-left">
+          <div class="loc-badge {% if not line.bin_loc %}loc-missing{% endif %}">
+            {{ line.bin_loc if line.bin_loc else '?' }}
+          </div>
+        </div>
+
+        <div class="pick-card-body">
+          <div class="item-code">{{ line.item_code }}</div>
+          <div class="item-name">{{ line.item_name }}</div>
+        </div>
+
+        <div class="pick-card-right">
+          <div class="qty-display" id="qty-{{ order.doc_num }}-{{ line.item_code }}">
+            <span class="qty-req">{{ line.qty | int }}</span>
+          </div>
+          <button class="btn-flag" onclick="openFlag(this)"
+                  data-doc="{{ order.doc_num }}"
+                  data-item="{{ line.item_code }}"
+                  data-name="{{ line.item_name }}"
+                  data-loc="{{ line.bin_loc }}"
+                  title="Signaler un problème">🚩</button>
+          <button class="btn-confirm" onclick="openConfirm(this)"
+                  data-doc="{{ order.doc_num }}"
+                  data-item="{{ line.item_code }}"
+                  data-name="{{ line.item_name }}"
+                  data-loc="{{ line.bin_loc }}"
+                  data-qty="{{ line.qty | int }}">✓</button>
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+    {% endfor %}
+
+  </div>
+
+  <!-- Modal confirmation quantité -->
+  <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal">
+      <div class="modal-loc" id="modal-item-loc"></div>
+      <div class="modal-title" id="modal-item-name"></div>
+      <div class="modal-code" id="modal-item-code"></div>
+      <div class="qty-input-row">
+        <button class="btn-qty" onclick="adjustQty(-1)">−</button>
+        <input type="number" id="modal-qty" class="qty-input" min="0">
+        <button class="btn-qty" onclick="adjustQty(1)">+</button>
+      </div>
+      <input type="text" id="modal-scan" class="scan-field"
+             placeholder="Scanner pour confirmer..."
+             autocomplete="off" autocorrect="off" autocapitalize="off">
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary btn-lg" onclick="confirmItem()">CONFIRMER</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal flag superviseur -->
+  <div class="modal-overlay" id="modal-flag" onclick="closeFlag(event)">
+    <div class="modal">
+      <div class="modal-title">Signaler un problème</div>
+      <div class="modal-code" id="flag-item-code"></div>
+      <div class="modal-loc" id="flag-item-loc"></div>
+      <div class="flag-reasons">
+        <button class="reason-btn" onclick="selectReason(this)" data-reason="Qté insuffisante">
+          Quantité insuffisante
+        </button>
+        <button class="reason-btn" onclick="selectReason(this)" data-reason="Item introuvable">
+          Item introuvable à la localisation
+        </button>
+        <button class="reason-btn" onclick="selectReason(this)" data-reason="Mauvaise localisation">
+          Localisation incorrecte dans SAP
+        </button>
+        <button class="reason-btn" onclick="selectReason(this)" data-reason="Item endommagé">
+          Item endommagé / non conforme
+        </button>
+      </div>
+      <input type="text" id="flag-note" class="scan-field"
+             placeholder="Note optionnelle..." autocomplete="off">
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeFlag()">Annuler</button>
+        <button class="btn btn-danger btn-lg" id="btn-submit-flag"
+                onclick="submitFlag()" disabled>ENVOYER AU SUPERVISEUR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boutons flottants -->
+  <div class="fab-container">
+    <button class="fab-scan" onclick="toggleScan()" title="Scanner un item">⬛</button>
+    <button class="btn btn-warning btn-fab" id="btn-complete"
+            onclick="completeTournee()">
+      FERMER LA TOURNÉE
+    </button>
+  </div>
+
+  <!-- Modal résultat final -->
+  <div class="modal-overlay" id="modal-result" style="display:none">
+    <div class="modal">
+      <div class="modal-title">Bons de livraison créés</div>
+      <div id="result-list" style="margin: 16px 0;"></div>
+      <div class="modal-actions">
+        <a href="/change-warehouse" class="btn btn-secondary">Changer succursale</a>
+        <a href="/pick/{{ warehouse }}" class="btn btn-primary">Nouvelle tournée</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SESSION_ID  = "{{ session_id }}";
+    const WAREHOUSE   = "{{ warehouse }}";
+    let currentDoc    = null;
+    let currentItem   = null;
+    let currentQtyReq = 0;
+    let doneCount     = 0;
+    const totalItems  = {{ total_items }};
+
+    // Compte les items confirmés par commande
+    const orderTotals = {};
+    const orderDone   = {};
+    {% for order in orders %}
+    orderTotals[{{ order.doc_num }}] = {{ order.lines|length }};
+    orderDone[{{ order.doc_num }}]   = 0;
+    {% endfor %}
+
+    // ── Scan ──────────────────────────────────────────────────────────────────
+    function toggleScan() {
+      document.getElementById("scan-bar").classList.toggle("visible");
+      if (document.getElementById("scan-bar").classList.contains("visible"))
+        document.getElementById("scan-input").focus();
+    }
+    function closeScan() {
+      document.getElementById("scan-bar").classList.remove("visible");
+    }
+
+    document.getElementById("scan-input").addEventListener("keydown", e => {
+      if (e.key !== "Enter") return;
+      const code = e.target.value.trim();
+      if (code) {
+        handleScan(code);
+        e.target.value = "";
+      }
+    });
+
+    document.getElementById("modal-scan").addEventListener("keydown", e => {
+      if (e.key !== "Enter") return;
+      const code = e.target.value.trim();
+      e.target.value = "";
+      if (code === currentItem) {
+        confirmItem();
+      } else {
+        e.target.style.borderColor = "#e74c3c";
+        setTimeout(() => e.target.style.borderColor = "", 1000);
+      }
+    });
+
+    function handleScan(code) {
+      const card = document.querySelector(`.pick-card:not(.confirmed)[data-item="${code}"]`);
+      if (card) {
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.querySelector(".btn-confirm").click();
+      }
+    }
+
+    // ── Modal confirm ─────────────────────────────────────────────────────────
+    function openConfirm(btn) {
+      currentDoc    = btn.dataset.doc;
+      currentItem   = btn.dataset.item;
+      currentQtyReq = parseInt(btn.dataset.qty);
+
+      document.getElementById("modal-item-name").textContent = btn.dataset.name;
+      document.getElementById("modal-item-code").textContent = currentItem;
+      document.getElementById("modal-item-loc").textContent  =
+        btn.dataset.loc ? btn.dataset.loc : "Localisation inconnue";
+      document.getElementById("modal-item-loc").className =
+        "modal-loc" + (btn.dataset.loc ? "" : " loc-missing");
+      document.getElementById("modal-qty").value = currentQtyReq;
+      document.getElementById("modal-scan").value = "";
+      document.getElementById("modal").style.display = "flex";
+      setTimeout(() => document.getElementById("modal-scan").focus(), 100);
+    }
+
+    function adjustQty(delta) {
+      const input = document.getElementById("modal-qty");
+      input.value = Math.max(0, parseInt(input.value || 0) + delta);
+    }
+
+    function closeModal(event) {
+      if (!event || event.target.id === "modal")
+        document.getElementById("modal").style.display = "none";
+    }
+
+    async function confirmItem() {
+      const qtyPicked = parseFloat(document.getElementById("modal-qty").value) || 0;
+      document.getElementById("modal").style.display = "none";
+
+      const resp = await fetch("/api/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: SESSION_ID,
+          doc_num:    parseInt(currentDoc),
+          item_code:  currentItem,
+          qty_picked: qtyPicked,
+        })
+      });
+      const data = await resp.json();
+
+      // Mark item as confirmed
+      const card = document.getElementById(`card-${currentDoc}-${currentItem}`);
+      card.classList.add("confirmed");
+      const qtyEl = document.getElementById(`qty-${currentDoc}-${currentItem}`);
+      qtyEl.innerHTML = `<span class="qty-picked">${qtyPicked}</span>`;
+
+      // Update order progress
+      orderDone[currentDoc] = (orderDone[currentDoc] || 0) + 1;
+      const orderEl = document.getElementById(`order-status-${currentDoc}`);
+      if (orderDone[currentDoc] >= orderTotals[currentDoc]) {
+        orderEl.innerHTML = `<span class="order-badge order-done">✓ Complété</span>`;
+        document.getElementById(`order-${currentDoc}`).classList.add("order-complete");
+      } else {
+        const remaining = orderTotals[currentDoc] - orderDone[currentDoc];
+        orderEl.innerHTML = `<span class="order-badge">${remaining} restant${remaining > 1 ? 's' : ''}</span>`;
+      }
+
+      doneCount = data.done;
+      document.getElementById("done-count").textContent = doneCount;
+
+      if (doneCount >= totalItems) {
+        document.getElementById("btn-complete").disabled = false;
+        document.getElementById("btn-complete").classList.add("btn-ready");
+      }
+    }
+
+    // ── Flag supervisor ───────────────────────────────────────────────────────
+    let flagDoc = null, flagItem = null, flagName = null, flagLoc = null;
+    let selectedReason = null;
+
+    function openFlag(btn) {
+      flagDoc  = btn.dataset.doc;
+      flagItem = btn.dataset.item;
+      flagName = btn.dataset.name;
+      flagLoc  = btn.dataset.loc;
+      selectedReason = null;
+
+      document.getElementById("flag-item-code").textContent = flagItem;
+      document.getElementById("flag-item-loc").textContent  = flagLoc || "Localisation inconnue";
+      document.getElementById("flag-note").value = "";
+      document.getElementById("btn-submit-flag").disabled = true;
+      document.querySelectorAll(".reason-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById("modal-flag").style.display = "flex";
+    }
+
+    function selectReason(btn) {
+      document.querySelectorAll(".reason-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      selectedReason = btn.dataset.reason;
+      document.getElementById("btn-submit-flag").disabled = false;
+    }
+
+    function closeFlag(event) {
+      if (!event || event.target.id === "modal-flag")
+        document.getElementById("modal-flag").style.display = "none";
+    }
+
+    async function submitFlag() {
+      document.getElementById("modal-flag").style.display = "none";
+      const note = document.getElementById("flag-note").value.trim();
+
+      const resp = await fetch("/api/flag", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: SESSION_ID, warehouse: WAREHOUSE,
+          doc_num: parseInt(flagDoc), item_code: flagItem,
+          item_name: flagName, bin_loc: flagLoc,
+          reason: selectedReason, note: note,
+        })
+      });
+      const data = await resp.json();
+
+      // Mark card as flagged
+      const card = document.getElementById(`card-${flagDoc}-${flagItem}`);
+      card.classList.add("flagged");
+      const qtyEl = document.getElementById(`qty-${flagDoc}-${flagItem}`);
+      qtyEl.innerHTML = `<span class="qty-flag">🚩</span>`;
+
+      // Update counters (flag counts as done)
+      orderDone[flagDoc] = (orderDone[flagDoc] || 0) + 1;
+      const orderEl = document.getElementById(`order-status-${flagDoc}`);
+      if (orderDone[flagDoc] >= orderTotals[flagDoc]) {
+        orderEl.innerHTML = `<span class="order-badge order-done">✓ Complété</span>`;
+        document.getElementById(`order-${flagDoc}`).classList.add("order-complete");
+      }
+      doneCount = data.done;
+      document.getElementById("done-count").textContent = doneCount;
+      updateCompleteBtn();
+    }
+
+    // ── Complete (partiel ou complet) ─────────────────────────────────────────
+    function updateCompleteBtn() {
+      const remaining = totalItems - doneCount;
+      const btn = document.getElementById("btn-complete");
+      if (remaining === 0) {
+        btn.textContent = "TOURNÉE COMPLÈTE ✓";
+        btn.className   = "btn btn-success btn-fab btn-ready";
+      } else {
+        btn.textContent = `FERMER (${remaining} non prélevé${remaining > 1 ? 's' : ''})`;
+        btn.className   = "btn btn-warning btn-fab";
+      }
+    }
+
+    async function completeTournee() {
+      const remaining = totalItems - doneCount;
+      if (remaining > 0) {
+        const ok = confirm(
+          `${remaining} item${remaining > 1 ? 's' : ''} non prélevé${remaining > 1 ? 's' : ''}.\n\n` +
+          `Les bons de livraison seront créés seulement pour ce qui a été confirmé.\n` +
+          `Les items restants resteront sur les commandes ouvertes dans SAP.\n\n` +
+          `Continuer?`
+        );
+        if (!ok) return;
+      }
+
+      const btn = document.getElementById("btn-complete");
+      btn.textContent = "Création des BL...";
+      btn.disabled = true;
+
+      const resp = await fetch("/api/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: SESSION_ID, warehouse: WAREHOUSE })
+      });
+      const data = await resp.json();
+
+      let html = "";
+      for (const d of data.deliveries) {
+        const ok = d.status === "created";
+        html += `<div class="result-item ${ok ? 'result-ok' : 'result-err'}">
+          <strong>${d.client}</strong><br>
+          ${ok ? `BL #${d.doc_num} créé dans SAP` : 'Erreur — créer manuellement'}
+        </div>`;
+      }
+      if (!html) html = `<div class="result-item">Aucun item confirmé — aucun BL créé.</div>`;
+      document.getElementById("result-list").innerHTML = html;
+      document.getElementById("modal-result").style.display = "flex";
+    }
+  </script>
+</body>
+</html>

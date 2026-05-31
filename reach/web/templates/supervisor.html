@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superviseur — Flags</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="header">
+    <a href="/" class="btn-back">←</a>
+    <h1>Alertes inventaire</h1>
+    {% if flags %}
+    <span class="progress-badge" style="background:#e74c3c;">{{ flags|length }}</span>
+    {% endif %}
+  </div>
+
+  <div class="container">
+    {% if flags %}
+      {% for flag in flags %}
+      <div class="flag-card" id="flag-{{ flag.id }}">
+        <div class="flag-header">
+          <div>
+            <div class="flag-item-code">{{ flag.item_code }}</div>
+            <div class="flag-item-name">{{ flag.item_name }}</div>
+          </div>
+          <div class="flag-reason-badge">{{ flag.reason }}</div>
+        </div>
+        <div class="flag-details">
+          <span class="flag-loc">📍 {{ flag.bin_loc if flag.bin_loc else 'Localisation inconnue' }}</span>
+          <span class="flag-wh">{{ flag.warehouse }} — Cmd #{{ flag.doc_num }}</span>
+          <span class="flag-time">{{ flag.created_at[:16] }}</span>
+        </div>
+        {% if flag.note %}
+        <div class="flag-note">"{{ flag.note }}"</div>
+        {% endif %}
+        <div class="flag-actions">
+          <button class="btn btn-success" onclick="resolveFlag({{ flag.id }})">
+            ✓ Résolu
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">✓</div>
+        <div>Aucune alerte en cours</div>
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    async function resolveFlag(flagId) {
+      await fetch("/api/flag/resolve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ flag_id: flagId })
+      });
+      const card = document.getElementById(`flag-${flagId}`);
+      card.classList.add("packed");
+      setTimeout(() => card.remove(), 800);
+    }
+    setTimeout(() => location.reload(), 60000);
+  </script>
+</body>
+</html>

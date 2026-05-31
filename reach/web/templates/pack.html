@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emballage</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="header">
+    <a href="/" class="btn-back">←</a>
+    <h1>Emballage</h1>
+    <a href="/supervisor" class="btn-supervisor" id="sup-link">🚩 Superviseur</a>
+    {% if mock %}<span class="badge badge-mock">TEST</span>{% endif %}
+  </div>
+
+  <!-- Filtre succursale -->
+  <div class="filter-bar">
+    <a href="/pack" class="filter-btn {% if not active_warehouse %}active{% endif %}">Toutes</a>
+    {% for wh in warehouses %}
+    <a href="/pack/{{ wh.WarehouseCode }}"
+       class="filter-btn {% if active_warehouse == wh.WarehouseCode %}active{% endif %}">
+      {{ wh.WarehouseCode }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="container">
+    {% if notes %}
+      {% for note in notes %}
+      <div class="pack-card" id="note-{{ note.id }}">
+        <div class="pack-card-header">
+          <div>
+            <div class="pack-client">{{ note.client_name }}</div>
+            <div class="pack-meta">BL #{{ note.sap_doc_num }} — {{ note.warehouse }}</div>
+            <div class="pack-time">{{ note.created_at[:16] }}</div>
+          </div>
+          <div class="pack-status">PRÊT</div>
+        </div>
+        <div class="pack-actions">
+          <button class="btn btn-success btn-lg" onclick="markPacked({{ note.id }})">
+            EMBALLÉ ✓
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <div>Aucun bon en attente d'emballage</div>
+        {% if active_warehouse %}
+        <div class="empty-sub">Pour {{ active_warehouse }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <script>
+    async function markPacked(noteId) {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = "...";
+
+      await fetch("/api/pack/done", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ note_id: noteId })
+      });
+
+      const card = document.getElementById(`note-${noteId}`);
+      card.classList.add("packed");
+      card.querySelector(".pack-status").textContent = "EMBALLÉ";
+      setTimeout(() => card.remove(), 1500);
+    }
+
+    // Auto-refresh toutes les 30 secondes
+    setTimeout(() => location.reload(), 30000);
+  </script>
+</body>
+</html>

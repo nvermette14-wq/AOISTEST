@@ -1,0 +1,369 @@
+/* WMS — Entrepôt | Optimisé tablette */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  font-size: 16px;
+  padding-bottom: 100px;
+}
+
+/* ── Header ── */
+.header {
+  background: #111111;
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.header h1 { font-size: 1.2rem; flex: 1; }
+.btn-back {
+  color: white; text-decoration: none; font-size: 1.4rem;
+  padding: 4px 8px; border-radius: 6px;
+}
+.btn-back:hover { background: rgba(255,255,255,0.15); }
+.progress-badge {
+  background: #cc0000; color: white;
+  padding: 4px 12px; border-radius: 20px;
+  font-weight: bold; font-size: 0.95rem;
+}
+.badge-mock {
+  background: #e67e22; color: white;
+  padding: 3px 8px; border-radius: 4px;
+  font-size: 0.75rem; font-weight: bold;
+}
+
+/* ── Container ── */
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.section-title {
+  font-size: 0.85rem; font-weight: 600; color: #666;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 12px 20px; border-radius: 10px; border: none;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  text-decoration: none; transition: all 0.15s;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary  { background: #cc0000; color: white; }
+.btn-primary:hover { background: #aa0000; }
+.btn-secondary { background: #ecf0f1; color: #333; }
+.btn-secondary:hover { background: #dde1e4; }
+.btn-success  { background: #27ae60; color: white; }
+.btn-success:hover { background: #219a52; }
+.btn-lg { font-size: 1.1rem; padding: 16px 28px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Warehouse cards (index) ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.card-wh {
+  background: white; border-radius: 14px; padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.wh-code { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; }
+.wh-name { color: #666; margin: 4px 0 16px; }
+.card-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ── Zone header ── */
+.zone-header {
+  background: #1a1a2e; color: white;
+  padding: 10px 16px; border-radius: 8px;
+  margin: 20px 0 8px;
+  font-weight: 700; font-size: 0.9rem;
+  letter-spacing: 0.3px;
+}
+
+/* ── Pick card ── */
+.pick-card {
+  background: white; border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: all 0.2s;
+  border-left: 4px solid transparent;
+}
+.pick-card.confirmed {
+  background: #f0fff4;
+  border-left-color: #27ae60;
+  opacity: 0.7;
+}
+.pick-card-left { min-width: 70px; }
+.loc-badge {
+  background: #111111; color: white;
+  padding: 6px 10px; border-radius: 8px;
+  font-family: monospace; font-size: 0.85rem;
+  font-weight: 700; text-align: center;
+}
+.loc-missing { background: #e67e22; }
+.pick-card-body { flex: 1; min-width: 0; }
+.item-code { font-size: 0.8rem; color: #888; font-family: monospace; }
+.item-name { font-size: 1rem; font-weight: 600; color: #1a1a2e; margin: 2px 0; }
+.item-client { font-size: 0.8rem; color: #999; }
+.pick-card-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.qty-display { text-align: center; }
+.qty-req { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; }
+.qty-picked { font-size: 1.4rem; font-weight: 800; color: #27ae60; }
+.btn-confirm {
+  background: #cc0000; color: white;
+  border: none; border-radius: 50%;
+  width: 48px; height: 48px;
+  font-size: 1.3rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 6px rgba(52,152,219,0.4);
+}
+.btn-confirm:active { transform: scale(0.9); }
+.confirmed .btn-confirm { background: #27ae60; }
+.scan-field:focus { border-color: #cc0000; outline: none; }
+
+/* ── Scan bar ── */
+.scan-bar {
+  background: #1a1a2e; padding: 12px 16px;
+  display: none; align-items: center; gap: 10px;
+  position: sticky; top: 60px; z-index: 99;
+}
+.scan-bar.visible { display: flex; }
+.scan-bar input {
+  flex: 1; padding: 10px 14px; border-radius: 8px;
+  border: 2px solid #3498db; font-size: 1rem;
+  background: white;
+}
+.btn-icon {
+  background: none; border: none; color: white;
+  font-size: 1.2rem; cursor: pointer; padding: 8px;
+}
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200; padding: 20px;
+}
+.modal-overlay[style*="flex"] { display: flex !important; }
+.modal {
+  background: white; border-radius: 16px;
+  padding: 24px; width: 100%; max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+.modal-code  { font-family: monospace; color: #888; font-size: 0.9rem; }
+.modal-loc   {
+  background: #1a1a2e; color: white;
+  display: inline-block; padding: 4px 12px;
+  border-radius: 6px; font-family: monospace;
+  margin: 12px 0; font-weight: 700;
+}
+.qty-input-row {
+  display: flex; align-items: center; gap: 12px;
+  margin: 16px 0;
+}
+.qty-input {
+  font-size: 2rem; font-weight: 800; text-align: center;
+  border: 3px solid #cc0000; border-radius: 10px;
+  padding: 10px; flex: 1; width: 0;
+}
+.btn-qty {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: #ecf0f1; border: none;
+  font-size: 1.6rem; cursor: pointer; font-weight: 700;
+}
+.btn-qty:active { background: #dde; transform: scale(0.9); }
+.scan-field {
+  width: 100%; padding: 10px 14px;
+  border: 2px dashed #aaa; border-radius: 8px;
+  font-size: 0.95rem; margin-bottom: 16px;
+}
+.scan-field:focus { border-color: #3498db; outline: none; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ── FAB ── */
+.fab-container {
+  position: fixed; bottom: 20px; right: 16px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+  z-index: 150;
+}
+.fab-scan {
+  background: #555; color: white; border: none;
+  width: 48px; height: 48px; border-radius: 50%;
+  font-size: 1.3rem; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.btn-fab {
+  padding: 16px 28px; border-radius: 50px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+.btn-ready { animation: pulse 1.5s infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 6px 20px rgba(39,174,96,0.4); }
+  50%       { box-shadow: 0 6px 30px rgba(39,174,96,0.8); }
+}
+
+/* ── Supervisor link ── */
+.btn-supervisor {
+  color: #ffcccc; text-decoration: none;
+  font-size: 0.85rem; font-weight: 600;
+  padding: 4px 10px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.2);
+  white-space: nowrap;
+}
+.btn-supervisor:hover { background: rgba(255,255,255,0.1); }
+
+/* ── Warehouse select (index) ── */
+.card-wh-btn {
+  width: 100%; text-align: left; cursor: pointer;
+  border: 2px solid transparent; transition: all 0.15s;
+}
+.card-wh-btn:hover { border-color: #3498db; transform: translateY(-2px); }
+.card-wh-btn:active { transform: scale(0.98); }
+.wh-arrow { font-size: 1.4rem; color: #3498db; margin-top: 8px; }
+
+/* ── Order block ── */
+.order-block {
+  background: white; border-radius: 14px;
+  margin-bottom: 16px; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+.order-block.order-complete { border-color: #27ae60; }
+
+.order-header {
+  background: #111111; color: white;
+  padding: 12px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.order-num    { font-size: 1rem; font-weight: 800; font-family: monospace; }
+.order-client { font-size: 0.95rem; margin-top: 2px; }
+.order-date   { font-size: 0.75rem; color: #aaa; margin-top: 2px; }
+.order-badge {
+  background: rgba(255,255,255,0.15); color: white;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+}
+.order-badge.order-done { background: #27ae60; }
+
+.order-block .pick-card {
+  border-radius: 0;
+  border-left: none;
+  box-shadow: none;
+  border-top: 1px solid #f0f0f0;
+}
+.order-block .pick-card:last-child { border-radius: 0 0 12px 12px; }
+
+/* ── Pack cards ── */
+.filter-bar {
+  background: white; padding: 10px 16px;
+  display: flex; gap: 8px; overflow-x: auto;
+  border-bottom: 1px solid #e0e0e0;
+}
+.filter-btn {
+  padding: 6px 16px; border-radius: 20px;
+  background: #ecf0f1; color: #555;
+  text-decoration: none; font-size: 0.9rem;
+  white-space: nowrap;
+}
+.filter-btn.active { background: #111111; color: white; }
+.pack-card {
+  background: white; border-radius: 12px;
+  padding: 16px 20px; margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 5px solid #27ae60;
+  transition: all 0.3s;
+}
+.pack-card.packed { opacity: 0.4; border-left-color: #aaa; }
+.pack-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.pack-client { font-size: 1.1rem; font-weight: 700; }
+.pack-meta   { color: #3498db; font-size: 0.9rem; margin-top: 3px; font-family: monospace; }
+.pack-time   { color: #aaa; font-size: 0.8rem; margin-top: 2px; }
+.pack-status {
+  background: #27ae60; color: white;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 0.85rem; font-weight: 700;
+}
+.pack-actions { display: flex; justify-content: flex-end; }
+
+/* ── Result modal ── */
+.result-item {
+  padding: 12px 16px; border-radius: 8px;
+  margin-bottom: 8px; font-weight: 600;
+}
+.result-ok  { background: #f0fff4; border-left: 4px solid #27ae60; }
+.result-err { background: #fff5f5; border-left: 4px solid #e74c3c; }
+
+/* ── Flag button & state ── */
+.btn-flag {
+  background: none; border: none;
+  font-size: 1.2rem; cursor: pointer; padding: 6px;
+  opacity: 0.4; transition: opacity 0.2s;
+}
+.btn-flag:hover, .btn-flag:active { opacity: 1; }
+.pick-card.flagged {
+  background: #fff8f0;
+  border-left: 4px solid #e67e22;
+  opacity: 0.8;
+}
+.qty-flag { font-size: 1.2rem; }
+
+/* ── Flag modal ── */
+.flag-reasons { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.reason-btn {
+  padding: 12px 16px; border-radius: 10px;
+  border: 2px solid #e0e0e0; background: white;
+  text-align: left; cursor: pointer; font-size: 0.95rem;
+  transition: all 0.15s;
+}
+.reason-btn:hover  { border-color: #e74c3c; }
+.reason-btn.active { border-color: #e74c3c; background: #fff5f5; font-weight: 600; }
+.btn-danger { background: #e74c3c; color: white; }
+.btn-danger:hover { background: #c0392b; }
+
+/* ── Warning button ── */
+.btn-warning { background: #e67e22; color: white; }
+.btn-warning:hover { background: #d35400; }
+
+/* ── Flag cards (supervisor) ── */
+.flag-card {
+  background: white; border-radius: 12px;
+  padding: 16px 20px; margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 5px solid #e74c3c;
+  transition: all 0.3s;
+}
+.flag-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.flag-item-code { font-family: monospace; font-weight: 700; font-size: 1rem; color: #1a1a2e; }
+.flag-item-name { color: #555; font-size: 0.9rem; margin-top: 2px; }
+.flag-reason-badge {
+  background: #ffeaa7; color: #c0392b;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+}
+.flag-details { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; color: #888; margin-bottom: 10px; }
+.flag-note {
+  background: #f9f9f9; border-left: 3px solid #ddd;
+  padding: 8px 12px; border-radius: 0 6px 6px 0;
+  font-style: italic; color: #666; margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+.flag-actions { display: flex; justify-content: flex-end; }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center; padding: 60px 20px; color: #999;
+}
+.empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-sub  { font-size: 0.85rem; margin-top: 6px; }
