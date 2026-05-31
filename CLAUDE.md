@@ -109,10 +109,12 @@ Use this to classify incoming email. Classify every email into one of three buck
 - Toute situation qui nécessite un jugement ou une réponse personnalisée
 
 **Auto-respond — send immediately without review:**
-- Questions simples avec une réponse standard connue
+- Sollicitations de fournisseurs non sollicitées (rep qui pitch sans rendez-vous)
+- Réponses automatiques de systèmes (notifications, confirmations de livraison, etc.)
+- Courriels clairement envoyés en masse sans contenu personnalisé
 
-**Auto-respond template (acknowledgement rapide):**
-> Bonjour, bien reçu. Je reviens vers vous rapidement.
+**Auto-respond template (sollicitation fournisseur):**
+> Bonjour, merci pour votre message. Nous ne sommes pas intéressés pour le moment.
 > Tig
 
 ---

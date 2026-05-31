@@ -8,6 +8,9 @@
 ---
 
 ## 2026-05-31
+- Audit run: 52/100. Top gap: Reach (F) — data.db et intel.db manquants, Outlook pas connecté.
+
+## 2026-05-31
 - Built: SAP B1 Quote Agent (reach/sap/) — db, sync, agent, /quote skill
 - Testé avec données mock — identification client, recherche FTS catalogue 450k items, validation stock, notes proactives
 - En attente: credentials SAP B1 Service Layer (lundi 2026-06-02) pour brancher données réelles

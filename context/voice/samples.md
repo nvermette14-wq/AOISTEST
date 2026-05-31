@@ -1,73 +1,83 @@
 # Voice Samples
 <!-- v1.1.0 -->
 
-> 5+ examples of your actual writing. The AI reads these to match your voice when drafting emails, posts, or any content.
-> Use real writing — copy from emails you've sent, posts you've published, or messages you've written.
-> Annotate each one with the tone and context so the AI understands when each style applies.
+> Exemples réels de l'écriture de Tig. Claude lit ces exemples pour reproduire son style.
+
+---
+
+## Sample 1 — Envoi de soumission au client
+
+**Tone notes:** Minimal. Chaleureux sans être formel. Aucun superflu.
+
+```
+Bonjour [Nom du client],
+
+Voici la soumission pour les items demandés.
+
+Merci et bonne journée
+```
+
+---
+
+## Sample 2 — Confirmation de commande
+
+**Tone notes:** Même pattern que la soumission. Court, professionnel, humain.
+
+```
+Bonjour [Nom du client],
+
+Voici la confirmation de commande.
+
+Merci et bonne journée
+```
+
+---
+
+## Sample 3 — Demande de clarification
+
+**Tone notes:** Direct, poli, va droit au but sans être brusque.
+
+```
+Bonjour,
+
+J'aurais besoin de plus de détails sur ce que vous demandez svp.
+
+Merci et bonne journée
+```
+
+---
+
+## Sample 4 — Exemple de courriel entrant (demande de prix client)
+
+**Tone notes:** Ce que les clients envoient — utile pour l'agent de classification. Requête type : prix + délais + items listés.
+
+```
+Bonjour,
+
+Svp j'aimerais avoir les prix et délais pour le compte #[compte fournisseur]
+pour ces items : X Y Z
+
+Merci
+```
+
+---
+
+## Sample 5 — [À remplir]
+
+**Tone notes:** Ajoute un autre exemple quand tu en as un — suivi de commande, réponse à un backorder, etc.
+
+```
+[Colle ici un vrai courriel.]
+```
 
 ---
 
 ## Voice Summary
 
-Style général de Tig : chaleureux et bref. Professionnel mais humain. Va droit au but sans être froid. Écrit comme il parle — naturel, pas corporate.
+Style de Tig : **bref et chaleureux**. Chaque courriel tient en 3 lignes. Pas de formules vides, pas d'introduction inutile. Le message, et c'est tout.
 
-- **Openers:** Direct. Pas de "j'espère que ce courriel vous trouve bien."
-- **Length:** Court par défaut. Expand seulement si la complexité l'exige.
-- **Vocabulary:** Français québécois naturel. Termes industriels quand approprié.
-- **Tone:** Chaleureux mais efficace. Pas de fioriture.
-- **Sign-off:** Simple — prénom ou rien.
-- **Never use:** Jargon corporatif creux, formules de politesse excessives.
-
----
-
-## Sample 1 — [À remplir : courriel de soumission à un client]
-
-**Tone notes:** Chaleureux, direct, professionnel.
-
-```
-[Colle ici un vrai courriel de soumission que tu as envoyé — 150 à 400 mots idéalement.]
-```
-
----
-
-## Sample 2 — [À remplir : réponse à une demande de prix]
-
-**Tone notes:** Rapide, précis, serviable.
-
-```
-[Colle ici une vraie réponse à une demande de prix.]
-```
-
----
-
-## Sample 3 — [À remplir : suivi de commande ou livraison]
-
-**Tone notes:** Proactif, rassurant, bref.
-
-```
-[Colle ici un vrai message de suivi.]
-```
-
----
-
-## Sample 4 — [À remplir : message interne à l'équipe]
-
-**Tone notes:** Très décontracté, pratique, pas de filtre corporate.
-
-```
-[Colle ici un vrai message interne — Slack, Teams, courriel interne, peu importe.]
-```
-
----
-
-## Sample 5 — [À remplir : communication avec un fournisseur ou partenaire]
-
-**Tone notes:** Professionnel, direct, orienté vers l'action.
-
-```
-[Colle ici un vrai message à un fournisseur ou partenaire.]
-```
-
----
-
-> **Note :** Les samples ci-dessus sont à remplir avec tes vrais écrits. Plus ils sont authentiques et variés, mieux Claude pourra imiter ton style. Prends 10 minutes pour coller de vrais exemples — ça vaut le coup.
+- **Openers:** "Bonjour [Nom]," — jamais "J'espère que ce message vous trouve bien"
+- **Corps:** Une phrase maximum. Ce que le client a besoin de savoir.
+- **Sign-off:** "Merci et bonne journée" — toujours le même, jamais "Cordialement" ou "Bien à vous"
+- **Longueur:** 3 lignes par défaut. S'étire seulement si la complexité l'exige vraiment.
+- **Never use:** Formules corporatives, surplus d'explications, "n'hésitez pas à me contacter pour tout questionnement"
